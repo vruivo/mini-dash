@@ -1,0 +1,16 @@
+[Unit]
+Description=Dashboard with running services
+After=multi-user.target
+
+[Service]
+Type=simple
+User=${USER}
+WorkingDirectory=${DIR}
+ExecStartPre=iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8000
+ExecStart=npm start
+ExecStopPost=iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8000
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
